@@ -1,0 +1,39 @@
+name: Feature request
+description: Propose a focused improvement to the public offline design-token utility
+title: "[Feature] "
+body:
+  - type: markdown
+    attributes:
+      value: "Suggest changes that solve a concrete developer problem. Please avoid confidential project details, credentials, customer records or unrelated products."
+  - type: textarea
+    id: problem
+    attributes:
+      label: What developer problem are you solving?
+      description: Describe your use case and why the current small API is insufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include a minimal synthetic token input and expected output when practical.
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Which area?
+      options:
+        - Token compilation or aliases
+        - Value validation or error reporting
+        - Contrast demonstrations
+        - Usage examples or documentation
+        - Tests or developer experience
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional; describe a workaround or why a simpler approach would not work.
