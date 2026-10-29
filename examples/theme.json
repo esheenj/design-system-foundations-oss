@@ -1,0 +1,12 @@
+{
+  "color": {
+    "brand": "#2563eb",
+    "action": "{color.brand}",
+    "text": "#111827",
+    "surface": "#ffffff"
+  },
+  "spacing": {
+    "sm": "8px",
+    "md": "16px"
+  }
+}
