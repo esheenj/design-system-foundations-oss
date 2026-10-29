@@ -1,20 +1,87 @@
 # Design System Foundations
 
-An original, offline design-token compiler and contrast demonstration. Includes synthetic tokens and deterministic unit tests.
+[![Tests](https://github.com/esheenj/design-system-foundations-oss/actions/workflows/test.yml/badge.svg)](https://github.com/esheenj/design-system-foundations-oss/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node.js 20+](https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white)](package.json)
 
-## Run
+**An offline-first design-token compiler and contrast demonstration from [Esheen Labs](https://github.com/esheenj).** A small, dependency-free JavaScript reference implementation for people building consistent, accessible-minded user interfaces.
 
-Node.js 20+ is required.
+> **Project status:** educational open-source reference, not a full design-system product, accessibility audit, or certification.
 
-```sh
+## What it does
+
+- **Token compilation:** flatten nested token objects into deterministic, CSS custom-property output.
+- **Aliases:** resolve references such as `{color.brand}`, with explicit errors for missing references and cycles.
+- **Input checks:** reject invalid token names and unsupported CSS values rather than silently emitting arbitrary declarations.
+- **Contrast demonstration:** calculate a WCAG-style luminance-based contrast ratio for two six-digit hex colors.
+- **Offline and dependency-free:** run on Node.js 20+ without network services or third-party runtime dependencies.
+- **Reproducible tests:** use Node's built-in test runner and a checked-in sample theme.
+
+## Try it in two commands
+
+Requires **Node.js 20+**.
+
+```bash
 npm test
 npm run demo
 ```
 
-## Limitations
+The demo prints resolved tokens, a sample text/surface contrast ratio, and generated CSS.
 
-Contrast examples and token compilation are educational checks, not evidence of WCAG certification or a complete design system. Verify accessibility and browser behavior independently.
+## Use it in code
 
-## Security and provenance
+```js
+import { compileTheme, contrastRatio } from "./src/tokens.mjs";
 
-This public release is assembled from an explicitly reviewed source allowlist into a fresh Git history. It does not include the private incubator Git history or planning files.
+const tokens = {
+  color: {
+    brand: "#2563eb",
+    action: "{color.brand}",
+    text: "#111827",
+    surface: "#ffffff"
+  },
+  spacing: { md: "16px" }
+};
+
+const { resolved, css } = compileTheme(tokens);
+console.log(resolved["color.action"]); // "#2563eb"
+console.log(css); // :root { --color-action: #2563eb; ... }
+console.log(contrastRatio("#111827", "#ffffff"));
+```
+
+The source lives in [`src/tokens.mjs`](src/tokens.mjs), the complete runnable example in [`examples/demo.mjs`](examples/demo.mjs), and the tests in [`tests/tokens.test.mjs`](tests/tokens.test.mjs).
+
+## API at a glance
+
+| Export | Purpose |
+| --- | --- |
+| `flattenTokens(input)` | Convert supported nested token objects into dot-separated paths. |
+| `compileTheme(tokens)` | Return `{ resolved, css }` with resolved aliases and stable CSS custom properties. |
+| `contrastRatio(foreground, background)` | Return a rounded numeric contrast ratio for two `#RRGGBB` colors. |
+| `TokenError` | Explicit error type for unsupported or invalid input. |
+
+**Supported compiled values:** six-digit hex colors, nonnegative integers, and nonnegative numeric values with `px`, `rem`, `em`, or `%` units. Other CSS values are intentionally outside the current allowlist.
+
+## For developers and AI coding agents
+
+- **Start here:** read this README, run `npm test`, then explore `src/tokens.mjs`.
+- **Keep changes bounded:** add tests for new aliases, value types, or validation behavior.
+- **No implicit network calls:** the core module is intentionally deterministic and offline.
+- **Open a focused pull request:** explain the user problem, show the expected output, and document any new input formats.
+- **Contribution guidelines:** see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Scope, accessibility and security
+
+Contrast calculation is a **demonstration of a numeric color comparison**; it does not prove WCAG conformance. A complete accessibility review also requires contextual evaluation of text sizes, UI states, components, interactions, semantics, and browser behavior.
+
+The compiler checks a deliberately small set of token values. This does **not** make it a general-purpose CSS sanitizer or a secure substitute for review of untrusted data.
+
+### Public-release provenance
+
+This repository is an original, intentionally isolated open-source release assembled from an explicitly reviewed source allowlist into fresh Git history. It contains synthetic examples. It does not publish the history, credentials, planning files, or source of the private incubator.
+
+## Contributing
+
+Issues, reproducible bug reports, docs improvements, and small tested pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md). Please do not include secrets, proprietary assets, customer data, or vulnerabilities with exploit details in public issues.
+
+Maintained as an [Esheen Labs](https://github.com/esheenj) open-source project. Licensed under [MIT](LICENSE).
