@@ -68,7 +68,7 @@ The source lives in [`src/tokens.mjs`](src/tokens.mjs), the complete runnable ex
 - **Keep changes bounded:** add tests for new aliases, value types, or validation behavior.
 - **No implicit network calls:** the core module is intentionally deterministic and offline.
 - **Open a focused pull request:** explain the user problem, show the expected output, and document any new input formats.
-- **Contribution guidelines:** see [CONTRIBUTING.md](CONTRIBUTING.md).
+- **Contribution guidelines:** see [CONTRIBUTING.md](CONTRIBUTING.md) and the [AI agent instructions](AGENTS.md).
 
 ## Scope, accessibility and security
 
@@ -82,6 +82,6 @@ This repository is an original, intentionally isolated open-source release assem
 
 ## Contributing
 
-Issues, reproducible bug reports, docs improvements, and small tested pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md). Please do not include secrets, proprietary assets, customer data, or vulnerabilities with exploit details in public issues.
+Issues, reproducible bug reports, docs improvements, and small tested pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md). Please do not include secrets, proprietary assets, customer data, or vulnerabilities with exploit details in public issues.
 
 Maintained as an [Esheen Labs](https://github.com/esheenj) open-source project. Licensed under [MIT](LICENSE).
