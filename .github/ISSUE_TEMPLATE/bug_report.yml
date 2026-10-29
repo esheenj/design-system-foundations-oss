@@ -1,0 +1,35 @@
+name: Bug report
+description: Report a reproducible issue in the offline token compiler
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for taking the time to report a bug. Please use synthetic examples and do not submit secrets or personal information."
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Node.js version and operating system
+      placeholder: "Node.js 22 on Ubuntu"
+    validations:
+      required: true
+  - type: textarea
+    id: reproducer
+    attributes:
+      label: Minimal reproduction
+      description: Include a minimal input token object and commands
+      placeholder: "npm test / node examples/demo.mjs"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
