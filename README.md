@@ -28,6 +28,18 @@ npm run demo
 
 The demo prints resolved tokens, a sample text/surface contrast ratio, and generated CSS.
 
+## Use it from the command line
+
+Compile a **local synthetic JSON theme** directly to CSS custom properties; no install, network connection, API key or output file is required.
+
+```bash
+node bin/compile.mjs examples/theme.json
+node bin/compile.mjs examples/theme.json --resolved
+node bin/compile.mjs --help
+```
+
+The first command prints CSS. The second prints resolved tokens as JSON. The tool reads only the explicitly named regular file, up to **64 KiB**, and writes no files. It rejects malformed JSON and unsupported token values.
+
 ## Use it in code
 
 ```js
