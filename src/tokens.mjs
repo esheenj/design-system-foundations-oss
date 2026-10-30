@@ -11,8 +11,9 @@ const NAME = /^[a-z][a-z0-9-]*$/;
 const SAFE_VALUE = /^(?:#[0-9a-fA-F]{6}|(?:0|[1-9]\d*)(?:\.\d+)?(?:px|rem|em|%)|(?:0|[1-9]\d*))$/;
 
 export function flattenTokens(input, prefix = "") {
-  if (!input || typeof input !== "object" || Array.isArray(input)) {
-    throw new TokenError("Tokens must be a non-empty plain object.");
+  if (!input || typeof input !== "object" ||
+      ![Object.prototype, null].includes(Object.getPrototypeOf(input))) {
+    throw new TokenError(`Tokens at ${prefix || "(root)"} must be a plain object or null-prototype group.`);
   }
   const output = {};
   for (const [key, value] of Object.entries(input)) {
@@ -34,7 +35,7 @@ export function compileTheme(tokens) {
   if (!Object.keys(flat).length) throw new TokenError("Provide at least one token.");
   const resolved = {};
   const resolve = (path, visiting = []) => {
-    if (!(path in flat)) throw new TokenError(`Unknown token reference: ${path}`);
+    if (!Object.hasOwn(flat, path)) throw new TokenError(`Unknown token reference: ${path}`);
     if (visiting.includes(path)) throw new TokenError(`Circular token reference: ${[...visiting, path].join(" -> ")}`);
     const value = flat[path];
     const alias = value.match(ALIAS);
@@ -63,3 +64,4 @@ export function contrastRatio(foreground, background) {
   const b = luminance(background);
   return Math.round(((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)) * 100) / 100;
 }
+

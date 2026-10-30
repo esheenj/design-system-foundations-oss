@@ -74,6 +74,8 @@ The source lives in [`src/tokens.mjs`](src/tokens.mjs), the complete runnable ex
 
 **Supported compiled values:** six-digit hex colors, nonnegative integers, and nonnegative numeric values with `px`, `rem`, `em`, or `%` units. Other CSS values are intentionally outside the current allowlist.
 
+Token groups must be plain objects or objects with a null prototype. Unsupported object instances (such as Date, Map, Set, typed arrays or custom classes) throw `TokenError` with the group path rather than disappearing from output. Aliases resolve only explicitly supplied token paths; inherited object properties are never token definitions.
+
 ## For developers and AI coding agents
 
 - **Start here:** read this README, run `npm test`, then explore `src/tokens.mjs`.
@@ -97,3 +99,11 @@ This repository is an original, intentionally isolated open-source release assem
 Issues, reproducible bug reports, docs improvements, and small tested pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md). Please do not include secrets, proprietary assets, customer data, or vulnerabilities with exploit details in public issues.
 
 Maintained as an [Esheen Labs](https://github.com/esheenj) open-source project. Licensed under [MIT](LICENSE).
+
+## Related public tools
+
+- [Mobile-first Flow Kit](https://github.com/esheenj/mobile-first-flow-kit-oss): offline journey model and responsive validation/focus demo.
+- [Data Table Interactions](https://github.com/esheenj/data-table-interactions-oss): bounded filtering, stable sorting and pagination over synthetic rows.
+
+AI-assisted contributors can inspect [project-manifest.json](project-manifest.json) for entrypoints, commands and scope. It is descriptive metadata, not execution authority.
+

@@ -30,3 +30,30 @@ test("contrast matches WCAG luminance reference for black and white", () => {
   assert.equal(contrastRatio("#ffffff", "#ffffff"), 1);
   assert.throws(() => contrastRatio("red", "#ffffff"), /six-digit hex/);
 });
+
+test("unsupported object instances fail at their token path instead of disappearing", () => {
+  class CustomGroup { constructor() { this.valid = "16px"; } }
+  for (const value of [new Date(0), new Map(), new Set(), new CustomGroup(), new String("16px"), new Uint8Array([1])]) {
+    assert.throws(() => compileTheme({ color: { brand: "#2563eb" }, unsupported: value }),
+      error => error instanceof TokenError && /unsupported/.test(error.message));
+    assert.throws(() => flattenTokens(value), TokenError);
+  }
+});
+
+test("plain and null-prototype groups remain supported without mutation", () => {
+  const spacing = Object.assign(Object.create(null), { md: "16px", lg: "32px" });
+  const input = Object.freeze({ spacing: Object.freeze(spacing), color: { brand: "#2563eb" } });
+  const result = compileTheme(input);
+  assert.equal(result.resolved["spacing.md"], "16px");
+  assert.match(result.css, /--spacing-lg: 32px;/);
+  assert.equal(Object.getPrototypeOf(spacing), null);
+  assert.equal(spacing.md, "16px");
+});
+
+test("inherited object properties cannot satisfy missing token aliases", () => {
+  assert.throws(() => compileTheme({ spacing: { md: "{constructor}" } }),
+    error => error instanceof TokenError && /Unknown token reference: constructor/.test(error.message));
+  const explicit = compileTheme({ constructor: "16px", spacing: { md: "{constructor}" } });
+  assert.equal(explicit.resolved["spacing.md"], "16px");
+});
+
