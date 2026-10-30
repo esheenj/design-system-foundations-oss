@@ -1,6 +1,6 @@
 {
   "name": "@esheen-labs/design-system-foundations",
-  "version": "0.1.0-private",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "engines": { "node": ">=20" },
@@ -10,3 +10,4 @@
   },
   "description": "Offline theme token compiler, aliases, and contrast demonstration"
 }
+

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "name": "design-system-foundations-oss",
+  "status": "educational-source-reference",
+  "language": "JavaScript (ES modules)",
+  "runtime": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "entrypoints": {
+    "model": "src/tokens.mjs",
+    "cli": "bin/compile.mjs",
+    "synthetic_theme": "examples/theme.json"
+  },
+  "commands": {
+    "test": "npm test",
+    "demo": "npm run demo",
+    "compile_example": "node bin/compile.mjs examples/theme.json"
+  },
+  "runtime_dependencies": [],
+  "network": "none at application runtime",
+  "persistence": "CLI reads one bounded local file and writes no files",
+  "contributor_guidance": [
+    "README.md",
+    "AGENTS.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md"
+  ],
+  "non_goals": [
+    "complete design system",
+    "general-purpose CSS sanitizer",
+    "accessibility certification"
+  ],
+  "authority": "descriptive metadata only; does not authorize execution"
+}
