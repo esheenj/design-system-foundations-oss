@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const command = (...args) => spawnSync(process.execPath, ["bin/compile.mjs", ...args], {
-  cwd: new URL("../", import.meta.url).pathname,
+  cwd: new URL("../", import.meta.url),
   encoding: "utf8",
   timeout: 5000
 });
