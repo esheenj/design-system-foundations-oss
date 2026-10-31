@@ -71,10 +71,13 @@ The source lives in [`src/tokens.mjs`](src/tokens.mjs), the complete runnable ex
 | `compileTheme(tokens)` | Return `{ resolved, css }` with resolved aliases and stable CSS custom properties. |
 | `contrastRatio(foreground, background)` | Return a rounded numeric contrast ratio for two `#RRGGBB` colors. |
 | `TokenError` | Explicit error type for unsupported or invalid input. |
+| `MAX_GROUP_DEPTH` | Maximum nesting depth threshold (`10`) for token groups. |
 
 **Supported compiled values:** six-digit hex colors, nonnegative integers, and nonnegative numeric values with `px`, `rem`, `em`, or `%` units. Other CSS values are intentionally outside the current allowlist.
 
 Token groups must be plain objects or objects with a null prototype. Unsupported object instances (such as Date, Map, Set, typed arrays or custom classes) throw `TokenError` with the group path rather than disappearing from output. Aliases resolve only explicitly supplied token paths; inherited object properties are never token definitions.
+
+Token groups are bounded to a maximum nesting depth of 10 (`MAX_GROUP_DEPTH`). Cyclic object structures along an active traversal path are rejected with `TokenError` rather than recursing indefinitely. Legitimate reused (non-cyclic) group objects across different branches remain supported.
 
 ## For developers and AI coding agents
 
@@ -106,4 +109,3 @@ Maintained as an [Esheen Labs](https://github.com/esheenj) open-source project. 
 - [Data Table Interactions](https://github.com/esheenj/data-table-interactions-oss): bounded filtering, stable sorting and pagination over synthetic rows.
 
 AI-assisted contributors can inspect [project-manifest.json](project-manifest.json) for entrypoints, commands and scope. It is descriptive metadata, not execution authority.
-

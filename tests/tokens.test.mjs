@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { compileTheme, contrastRatio, flattenTokens, TokenError } from "../src/tokens.mjs";
+import { compileTheme, contrastRatio, flattenTokens, MAX_GROUP_DEPTH, TokenError } from "../src/tokens.mjs";
 import { demoTokens } from "../examples/sample.mjs";
 
 test("compiles theme, resolves aliases and produces stable CSS", () => {
@@ -57,3 +57,95 @@ test("inherited object properties cannot satisfy missing token aliases", () => {
   assert.equal(explicit.resolved["spacing.md"], "16px");
 });
 
+test("rejects direct circular token group reference with TokenError", () => {
+  const group = {};
+  group.self = group;
+  assert.throws(
+    () => compileTheme({ group }),
+    error => error instanceof TokenError && /Circular token group reference at group\.self/.test(error.message)
+  );
+  assert.throws(
+    () => flattenTokens(group),
+    error => error instanceof TokenError && /Circular token group reference at self/.test(error.message)
+  );
+});
+
+test("rejects indirect circular token group references with TokenError", () => {
+  const a = {};
+  const b = {};
+  a.b = b;
+  b.a = a;
+  assert.throws(
+    () => compileTheme({ a }),
+    error => error instanceof TokenError && /Circular token group reference at a\.b\.a/.test(error.message)
+  );
+
+  const node1 = {};
+  const node2 = {};
+  const node3 = {};
+  node1.next = node2;
+  node2.next = node3;
+  node3.next = node1;
+  assert.throws(
+    () => compileTheme({ chain: node1 }),
+    error => error instanceof TokenError && /Circular token group reference at chain\.next\.next\.next/.test(error.message)
+  );
+});
+
+test("preserves legitimate reused non-cyclic group objects across branches", () => {
+  const shared = { base: "16px", large: "24px" };
+  const input = {
+    card: { spacing: shared },
+    modal: { spacing: shared }
+  };
+  const { resolved, css } = compileTheme(input);
+  assert.equal(resolved["card.spacing.base"], "16px");
+  assert.equal(resolved["card.spacing.large"], "24px");
+  assert.equal(resolved["modal.spacing.base"], "16px");
+  assert.equal(resolved["modal.spacing.large"], "24px");
+  assert.match(css, /--card-spacing-base: 16px;/);
+  assert.match(css, /--modal-spacing-base: 16px;/);
+});
+
+test("compiles valid nested token groups up to the allowed boundary", () => {
+  let current = { value: "16px" };
+  for (let i = 10; i >= 1; i--) {
+    current = { [`level${i}`]: current };
+  }
+  const result = compileTheme(current);
+  const expectedKey = Array.from({ length: 10 }, (_, i) => `level${i + 1}`).join(".") + ".value";
+  assert.equal(result.resolved[expectedKey], "16px");
+  assert.match(result.css, new RegExp(`--${expectedKey.replaceAll(".", "-")}: 16px;`));
+});
+
+test("bounds nesting depth to MAX_GROUP_DEPTH and rejects deeper nesting", () => {
+  assert.equal(MAX_GROUP_DEPTH, 10);
+  let current = { value: "16px" };
+  for (let i = 11; i >= 1; i--) {
+    current = { [`level${i}`]: current };
+  }
+  assert.throws(
+    () => compileTheme(current),
+    error => error instanceof TokenError && new RegExp(`Maximum token group depth of ${MAX_GROUP_DEPTH} exceeded`).test(error.message)
+  );
+});
+
+test("handles cyclic and shared null-prototype groups correctly", () => {
+  const nullCycle = Object.create(null);
+  nullCycle.self = nullCycle;
+  assert.throws(
+    () => compileTheme({ group: nullCycle }),
+    error => error instanceof TokenError && /Circular token group reference at group\.self/.test(error.message)
+  );
+
+  const sharedNull = Object.assign(Object.create(null), { size: "8px" });
+  const input = {
+    box: Object.assign(Object.create(null), { pad: sharedNull }),
+    panel: Object.assign(Object.create(null), { pad: sharedNull })
+  };
+  const { resolved, css } = compileTheme(input);
+  assert.equal(resolved["box.pad.size"], "8px");
+  assert.equal(resolved["panel.pad.size"], "8px");
+  assert.match(css, /--box-pad-size: 8px;/);
+  assert.match(css, /--panel-pad-size: 8px;/);
+});

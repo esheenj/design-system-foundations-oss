@@ -10,24 +10,42 @@ const ALIAS = /^\{([a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)*)\}$/;
 const NAME = /^[a-z][a-z0-9-]*$/;
 const SAFE_VALUE = /^(?:#[0-9a-fA-F]{6}|(?:0|[1-9]\d*)(?:\.\d+)?(?:px|rem|em|%)|(?:0|[1-9]\d*))$/;
 
+/** Maximum allowed nesting depth for token groups. */
+export const MAX_GROUP_DEPTH = 10;
+
 export function flattenTokens(input, prefix = "") {
-  if (!input || typeof input !== "object" ||
-      ![Object.prototype, null].includes(Object.getPrototypeOf(input))) {
-    throw new TokenError(`Tokens at ${prefix || "(root)"} must be a plain object or null-prototype group.`);
-  }
-  const output = {};
-  for (const [key, value] of Object.entries(input)) {
-    if (!NAME.test(key)) throw new TokenError(`Invalid token name: ${key}`);
-    const path = prefix ? `${prefix}.${key}` : key;
-    if (value && typeof value === "object" && !Array.isArray(value)) {
-      Object.assign(output, flattenTokens(value, path));
-    } else if (typeof value === "string" || typeof value === "number") {
-      output[path] = String(value);
-    } else {
-      throw new TokenError(`Invalid value at ${path}`);
+  const active = new Set();
+  const traverse = (current, currentPrefix, depth) => {
+    if (!current || typeof current !== "object" ||
+        ![Object.prototype, null].includes(Object.getPrototypeOf(current))) {
+      throw new TokenError(`Tokens at ${currentPrefix || "(root)"} must be a plain object or null-prototype group.`);
     }
-  }
-  return output;
+    if (depth > MAX_GROUP_DEPTH) {
+      throw new TokenError(`Maximum token group depth of ${MAX_GROUP_DEPTH} exceeded at ${currentPrefix || "(root)"}`);
+    }
+    if (active.has(current)) {
+      throw new TokenError(`Circular token group reference at ${currentPrefix || "(root)"}`);
+    }
+    active.add(current);
+    try {
+      const output = {};
+      for (const [key, value] of Object.entries(current)) {
+        if (!NAME.test(key)) throw new TokenError(`Invalid token name: ${key}`);
+        const path = currentPrefix ? `${currentPrefix}.${key}` : key;
+        if (value && typeof value === "object" && !Array.isArray(value)) {
+          Object.assign(output, traverse(value, path, depth + 1));
+        } else if (typeof value === "string" || typeof value === "number") {
+          output[path] = String(value);
+        } else {
+          throw new TokenError(`Invalid value at ${path}`);
+        }
+      }
+      return output;
+    } finally {
+      active.delete(current);
+    }
+  };
+  return traverse(input, prefix, 0);
 }
 
 export function compileTheme(tokens) {
@@ -64,4 +82,3 @@ export function contrastRatio(foreground, background) {
   const b = luminance(background);
   return Math.round(((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)) * 100) / 100;
 }
-
