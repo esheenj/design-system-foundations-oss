@@ -109,3 +109,9 @@ Maintained as an [Esheen Labs](https://github.com/esheenj) open-source project. 
 - [Data Table Interactions](https://github.com/esheenj/data-table-interactions-oss): bounded filtering, stable sorting and pagination over synthetic rows.
 
 AI-assisted contributors can inspect [project-manifest.json](project-manifest.json) for entrypoints, commands and scope. It is descriptive metadata, not execution authority.
+
+## Test portability and CI
+
+The CLI test helper passes a file URL directly as its working directory, preserving platform-specific paths and decoding spaces/Unicode correctly. A regression runs the CLI suite from a copied checkout with spaces and Unicode in its path.
+
+Linux CI uses a disposable GitHub-hosted runner. After trusted setup, tests run as the unprivileged runner user with a clean environment, no new privileges, zero effective capabilities and a separate network namespace. The job verifies these properties before running the source. There are no private runners, production mounts, persisted checkout credentials or deployment steps. This is a bounded test arrangement, not a claim of universal sandbox security. Windows execution remains separately unverified until a Windows run is recorded.

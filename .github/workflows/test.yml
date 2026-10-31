@@ -22,5 +22,32 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: ${{ matrix.node }}
-      - run: npm test
-      - run: npm run demo
+      - name: Test reviewed source without network or elevated privileges
+        shell: bash
+        run: |
+          test_uid="$(id -u)"
+          test_gid="$(id -g)"
+          outer_netns="$(readlink /proc/self/ns/net)"
+          sudo unshare --net -- setpriv \
+            --reuid="$test_uid" --regid="$test_gid" --clear-groups \
+            --no-new-privs --bounding-set=-all --inh-caps=-all --ambient-caps=-all \
+            env -i PATH="$PATH" HOME="$RUNNER_TEMP" OUTER_NETNS="$outer_netns" \
+            /bin/bash -e <<'CHECKS'
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { readFileSync, readlinkSync } from 'node:fs';
+          import { networkInterfaces } from 'node:os';
+          assert.notEqual(process.getuid(), 0);
+          const status = readFileSync('/proc/self/status', 'utf8');
+          assert.match(status, /^NoNewPrivs:\s+1$/m);
+          assert.match(status, /^CapEff:\s+0+$/m);
+          assert.notEqual(readlinkSync('/proc/self/ns/net'), process.env.OUTER_NETNS);
+          assert(!Object.values(networkInterfaces()).flat().some(item => !item.internal));
+          const allowed = new Set(['PATH', 'HOME', 'OUTER_NETNS', 'PWD', 'SHLVL', '_']);
+          assert(Object.keys(process.env).every(key => allowed.has(key)));
+          console.log('ISOLATION_CHECK_PASS: non-root, no-new-privileges, zero effective capabilities, separate network namespace, clean environment');
+          NODE
+          unset OUTER_NETNS
+          node --test
+          node examples/demo.mjs
+          CHECKS
