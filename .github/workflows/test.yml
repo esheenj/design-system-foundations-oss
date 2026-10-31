@@ -6,6 +6,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+# Stop superseded PR checks; retain complete compatibility and isolation checks.
+concurrency:
+  group: offline-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   test:
     name: Node ${{ matrix.node }}

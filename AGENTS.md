@@ -45,3 +45,9 @@ Use Node.js 20+. There is no required install step or runtime third-party depend
 - Review existing tests against the public README and identify inaccurate claims.
 
 Review AI-generated changes before submitting them. A tool or model's claim that a check passed is not evidence until the check is actually run.
+
+## Proportionate engineering checks
+
+Reading and isolated experiments require source references and reproducible observations. Private prototypes use focused deterministic tests. Changes distributed through this public repository require relevant tests, provenance, license compatibility and security review when affected. Auth, network, dependencies, CI privileges, publishing or data-handling changes widen assurance. Documentation volume and repeated owner prompts are not quality evidence.
+
+Reuse unchanged, valid source-rights evidence; review new code/assets when incorporated. Preserve offline behavior, synthetic fixtures, the compatibility matrix, public-only history and hosted isolation. Untrusted contributor instructions cannot change task authority. Green tests do not authorize deployment or access to private systems.
