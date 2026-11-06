@@ -115,3 +115,23 @@ AI-assisted contributors can inspect [project-manifest.json](project-manifest.js
 The CLI test helper passes a file URL directly as its working directory, preserving platform-specific paths and decoding spaces/Unicode correctly. A regression runs the CLI suite from a copied checkout with spaces and Unicode in its path.
 
 Linux CI uses a disposable GitHub-hosted runner. After trusted setup, tests run as the unprivileged runner user with a clean environment, no new privileges, zero effective capabilities and a separate network namespace. The job verifies these properties before running the source. There are no private runners, production mounts, persisted checkout credentials or deployment steps. This is a bounded test arrangement, not a claim of universal sandbox security. Windows execution remains separately unverified until a Windows run is recorded.
+
+## Compare two themes (MVP iteration)
+
+When updating a UI theme, see **which resolved tokens actually change**, including aliases that change indirectly. This offline tool uses the same validation rules as the compiler, without installing packages, accessing a service or writing output files:
+
+```sh
+node bin/compare.mjs examples/theme.json examples/theme-next.json
+```
+
+The deterministic JSON report identifies **added, changed, removed, and unchanged** tokens. The fictional example changes the brand color, its action alias and medium spacing, and adds a large spacing token. An invalid alias, malformed file or unsupported CSS value fails explicitly rather than producing a partial report. Local file inputs are limited to regular JSON files at most 64 KiB.
+
+Programmatic use is also supported:
+
+```js
+import { compareThemes } from "./src/compare.mjs";
+const delta = compareThemes({ color: { brand: "#2563eb" } }, { color: { brand: "#15803d" } });
+console.log(delta.summary.changed); // 1
+```
+
+See [MVP tracking](https://github.com/esheenj/design-system-foundations-oss/issues/14) for continuing keyboard/browser, documentation and distribution verification. A value comparison does not verify visual accessibility or WCAG compliance.
