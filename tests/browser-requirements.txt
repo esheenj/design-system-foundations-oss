@@ -1,0 +1,2 @@
+# MIT-licensed test-only browser driver. The demo has zero runtime dependencies.
+playwright==1.62.0
