@@ -59,7 +59,7 @@ class TokenPlaygroundBrowserTests(unittest.TestCase):
         self.page=self.context.new_page()
         self.page.on("pageerror",lambda err:self.errors.append(str(err)))
         self.page.goto(self.origin)
-        expect(self.page.locator("#compiled")).to_contain_text("--color-brand: #2563eb;")
+        self.page.wait_for_function("document.querySelector('#compiled')?.value.includes('--color-brand: #2563eb;')")
 
     def tearDown(self):
         self.assertEqual(self.external,[],"No external resources")
