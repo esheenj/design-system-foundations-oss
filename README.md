@@ -8,6 +8,20 @@
 
 > **Project status:** educational open-source reference, not a full design-system product, accessibility audit, or certification.
 
+## Interactive token playground
+
+The original `index.html` now lets you change fictional brand/text/surface colors and spacing, inspect CSS emitted by the **real** `compileTheme` library, see alias propagation and a numeric contrast ratio, and download the compiled CSS locally. No app install, account, telemetry, remote API or injected HTML is used.
+
+```sh
+npm test
+npm run demo
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+Open `http://127.0.0.1:8000` on the same machine. To inspect the exact public artifact, run `node scripts/stage_pages.mjs dist/pages`; GitHub Actions checks its allowlisted files and the staged interactive UI in real Chrome. **A passing local test does not establish a live GitHub Pages site**: follow [enablement and HTTPS acceptance](docs/PAGES_RELEASE.md) before sharing a hosted URL.
+
+Find a small [developer contribution task](docs/GOOD_FIRST_ISSUES.md) or follow the [contribution guide](CONTRIBUTING.md). Contrast alone is not WCAG compliance or accessibility certification.
+
 ## What it does
 
 - **Token compilation:** flatten nested token objects into deterministic, CSS custom-property output.

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="description" content="Original offline design token compiler playground. Edit fictional theme colors and spacing to see real validated CSS output.">
+<title>Design System Foundations · Live Token Playground</title>
+<style>
+:root{font:16px/1.55 system-ui,-apple-system,sans-serif;color-scheme:light dark}
+*{box-sizing:border-box}
+body{margin:0;background:Canvas;color:CanvasText}
+.skip{position:absolute;top:-8rem;left:1rem;padding:.7rem;background:Canvas;color:CanvasText}
+.skip:focus{top:.7rem}
+:focus-visible{outline:3px solid Highlight;outline-offset:3px}
+main{max-width:80rem;margin:0 auto;padding:clamp(1rem,4vw,3rem)}
+h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.14;letter-spacing:-.025em}
+h2{font-size:1.45rem}
+p{max-width:70ch}
+.layout{display:grid;gap:1rem}
+.panel{border:1px solid GrayText;border-radius:1rem;padding:clamp(1rem,3vw,1.6rem);min-width:0}
+fieldset{border:0;margin:0;padding:0}
+legend{font-size:1.25rem;font-weight:750;margin-bottom:1rem}
+.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem}
+.control{min-width:0}
+label{display:block;font-weight:700;margin:0 0 .4rem}
+input[type=color]{width:100%;height:3.25rem;border:1px solid GrayText;border-radius:.5rem;background:Canvas;cursor:pointer}
+input[type=range]{width:100%;min-height:44px;accent-color:Highlight}
+code,textarea{font: .88rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+textarea{width:100%;min-height:17rem;padding:1rem;resize:vertical;border:1px solid GrayText;border-radius:.7rem;background:Canvas;color:CanvasText}
+button{font:inherit;min-height:44px;border:1px solid GrayText;border-radius:.6rem;padding:.6rem 1rem;cursor:pointer;background:Canvas;color:CanvasText}
+.actions{display:flex;flex-wrap:wrap;gap:.7rem;margin:1rem 0}
+#preview{background:var(--color-surface,#ffffff);color:var(--color-text,#111827);padding:clamp(1rem,3vw,2rem);border-radius:1rem;border:1px solid #aaa}
+#preview p{max-width:45ch}
+#preview-action{display:inline-block;background:var(--color-action,#2563eb);color:#fff;padding:.7rem 1rem;border-radius:.5rem;font-weight:700}
+#preview small{display:block;margin-top:.8rem}
+#metric{font-weight:750;font-size:1.2rem}
+.note{border-inline-start:4px solid currentColor;padding:.45rem .9rem;margin:1rem 0}
+#status{min-height:1.5rem}
+@media(min-width:58rem){.layout{grid-template-columns:minmax(18rem,1fr) minmax(0,1.4fr)}}
+@media(max-width:420px){.controls{grid-template-columns:1fr}}
+</style>
+<script type="module" src="./src/playground.mjs"></script>
+</head>
+<body><a class="skip" href="#main">Skip to token controls</a>
+<main id="main">
+<p><strong>Esheen Labs</strong> / Open-source design tools</p>
+<h1>Design tokens you can actually test.</h1>
+<p>Change an imaginary interface's colors and spacing. The page uses the same validated, alias-aware token compiler as the offline Node library. No AI, login, upload or remote assets.</p>
+<div class="note" aria-label="Educational limitations">Educational tool: color contrast ratios are numerical examples, <strong>not</strong> WCAG certification, user research or production design validation.</div>
+<div class="layout">
+<section class="panel" aria-labelledby="edit-heading">
+<h2 id="edit-heading">Edit fictional theme</h2>
+<fieldset><legend>Token inputs</legend>
+<div class="controls">
+<div class="control"><label for="brand">Brand color</label><input id="brand" type="color" value="#2563eb"></div>
+<div class="control"><label for="text-color">Text color</label><input id="text-color" type="color" value="#111827"></div>
+<div class="control"><label for="surface">Surface color</label><input id="surface" type="color" value="#ffffff"></div>
+<div class="control"><label for="spacing">Spacing: <output id="spacing-output" for="spacing">16</output> px</label>
+<input id="spacing" type="range" min="4" max="32" step="4" value="16"></div>
+</div>
+</fieldset>
+<div class="actions">
+<button id="reset" type="button">Reset theme</button>
+<button id="download" type="button">Download compiled CSS</button>
+</div>
+<p id="status" role="status" aria-live="polite"></p>
+</section>
+<section class="panel" aria-labelledby="preview-heading">
+<h2 id="preview-heading">Preview the output</h2>
+<div id="preview" aria-label="Fictional interface preview">
+<p><strong>Simple design systems, fewer surprises.</strong></p>
+<p>Tokens keep a sample interface consistent across its background, text and accent color.</p>
+<span id="preview-action">Illustrative action</span>
+<small>Action aliases the brand token; the preview does not submit anything.</small>
+</div>
+<p id="metric" role="status" aria-live="polite">Contrast: —</p>
+<p class="note">Contrast is computed between text and surface colors. A good numeric ratio alone does not prove accessibility or inclusive design.</p>
+<label for="compiled">Compiled CSS variables (select to copy)</label>
+<textarea id="compiled" readonly spellcheck="false" aria-label="Compiled design token CSS"></textarea>
+</section>
+</div>
+<p>Developers: <a href="https://github.com/esheenj/design-system-foundations-oss">source, tests and contribution guide on GitHub</a>. This static example runs entirely in the browser.</p>
+</main>
+</body></html>
