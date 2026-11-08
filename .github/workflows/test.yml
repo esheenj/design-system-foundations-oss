@@ -55,3 +55,26 @@ jobs:
           node --test
           node examples/demo.mjs
           CHECKS
+
+  browser-demo:
+    name: Real Chrome staged Token Playground QA
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - name: Build exact allowlisted public static files
+        run: node scripts/stage_pages.mjs dist/pages
+      - name: Install pinned test-only browser driver
+        run: python3 -m pip install -r tests/browser-requirements.txt
+      - name: Test staged site in real installed Chrome
+        env:
+          TOKEN_DEMO_ROOT: dist/pages
+        run: python3 tests/browser_playground.py
