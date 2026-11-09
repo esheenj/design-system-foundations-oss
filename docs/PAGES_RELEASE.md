@@ -1,6 +1,8 @@
 # Publish the Design System token playground browser MVP
 
-**Status: public source and tested static-demo pipeline; a live GitHub Pages URL is not confirmed.** Do not advertise a guessed `github.io` address.
+**Deployment status (9 November 2026):** [GitHub Actions run 42483171101](https://github.com/esheenj/design-system-foundations-oss/actions/runs/42483171101) successfully deployed the current public-source Pages bundle to [https://esheenj.github.io/design-system-foundations-oss/](https://esheenj.github.io/design-system-foundations-oss/). The URL is from GitHub's deployment receipt, not guessed. **Independent external HTTPS/browser checks were unavailable**, so visual/device acceptance is still pending.
+
+**Status: the GitHub Pages deploy job succeeded; independent external browser validation remains pending.** Do not substitute guessed or unrelated hosts.
 
 ## Run the exact public artifact locally
 
