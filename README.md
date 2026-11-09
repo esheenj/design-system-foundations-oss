@@ -1,5 +1,7 @@
 # Design System Foundations
 
+**[Open the GitHub-deployed interactive design-token playground](https://esheenj.github.io/design-system-foundations-oss/)** — [GitHub Pages deployment](https://github.com/esheenj/design-system-foundations-oss/actions/runs/42483171101) succeeded on **9 November 2026**. Independent external HTTPS/browser verification is still pending; please report any rendering problems in GitHub Issues.
+
 [![Tests](https://github.com/esheenj/design-system-foundations-oss/actions/workflows/test.yml/badge.svg)](https://github.com/esheenj/design-system-foundations-oss/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js 20+](https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white)](package.json)
