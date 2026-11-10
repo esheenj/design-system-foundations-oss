@@ -4,7 +4,7 @@ import {resolve,dirname,join,sep} from "node:path";
 import {fileURLToPath} from "node:url";
 import {createHash} from "node:crypto";
 const ROOT=fileURLToPath(new URL("../",import.meta.url));
-const FILES=Object.freeze(["index.html","src/playground.mjs","src/tokens.mjs"]);
+const FILES=Object.freeze(["index.html","audit.html","src/audit-controls.mjs","src/audit-ui.mjs","src/playground.mjs","src/tokens.mjs"]);
 const SCHEMA="public-design-tokens-pages-v1";
 function fail(reason){throw Error("PUBLIC_PAGES_STAGE_"+reason);}
 async function checkedSource(root,relative){
@@ -49,6 +49,11 @@ export async function stagePages(destination){
   const adapter=await readFile(join(out,"src/playground.mjs"),"utf8");
   if(!index.includes("./src/playground.mjs")||!adapter.includes("./tokens.mjs"))
    fail("IMPORT_LINK_MISSING");
+  const audit=await readFile(join(out,"audit.html"),"utf8");
+  const auditUI=await readFile(join(out,"src/audit-ui.mjs"),"utf8");
+  if(!audit.includes("./src/audit-ui.mjs")||!auditUI.includes("./audit-controls.mjs")||
+     !index.includes("audit.html")||!audit.includes("connect-src 'none'"))
+   fail("AUDIT_LINK_OR_OFFLINE_POLICY");
   const entries=[];
   for(const file of actual){
    const bytes=await readFile(join(out,file));
