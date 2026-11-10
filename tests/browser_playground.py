@@ -117,5 +117,25 @@ class TokenPlaygroundBrowserTests(unittest.TestCase):
                 self.assertEqual(layout["rows"],1)
                 self.assertEqual(layout["controls"],4)
 
+
+    def test_hosted_control_audit_and_hostile_metadata_inert(self):
+        self.page.goto(self.origin+"/audit.html")
+        expect(self.page.locator("#status")).to_contain_text("3 illustrative findings")
+        self.assertEqual(self.page.locator("#rows li").count(),2)
+        self.page.locator("#fixture").fill('[{"id":"fictional-safe","name":"<img src=x onerror=alert(1)>","foreground":"#111111","background":"#ffffff","width":48,"height":48}]')
+        self.page.locator("#run-audit").click()
+        expect(self.page.locator("#status")).to_contain_text("0 illustrative findings")
+        self.assertEqual(self.page.locator("#rows img").count(),0)
+        expect(self.page.locator("#rows li strong")).to_contain_text("<img src=x onerror=alert(1)>")
+        self.page.locator("#fixture").fill('[{"id":"bad","name":"","foreground":"red","background":"#ffffff","width":12,"height":12}]')
+        self.page.locator("#run-audit").click()
+        expect(self.page.locator("#status")).to_contain_text("Rejected:")
+        self.assertEqual(self.page.locator("#rows li").count(),0)
+        self.page.locator("#reset-audit").click()
+        expect(self.page.locator("#fixture")).to_be_focused()
+        self.page.set_viewport_size({"width":320,"height":700})
+        self.assertLessEqual(self.page.evaluate("document.documentElement.scrollWidth"),320)
+        self.assertIn("connect-src 'none'",self.page.locator('meta[http-equiv="Content-Security-Policy"]').get_attribute("content"))
+
 if __name__=="__main__":
     unittest.main(verbosity=2)
