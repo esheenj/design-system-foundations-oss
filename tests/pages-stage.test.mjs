@@ -12,7 +12,7 @@ test("staged public demo is the complete allowlisted source-only artifact",async
   assert.equal(first.state,"STAGED_ONLY");
   assert.equal(first.verifiedHosting,false);
   assert.deepEqual(first.files,second.files);
-  assert.deepEqual(first.files.map(x=>x.path),[".nojekyll","index.html","src/playground.mjs","src/tokens.mjs"]);
+  assert.deepEqual(first.files.map(x=>x.path),[".nojekyll","audit.html","index.html","src/audit-controls.mjs","src/audit-ui.mjs","src/playground.mjs","src/tokens.mjs"]);
   for(const row of first.files){
     assert.match(row.sha256,/^[a-f0-9]{64}$/);
     assert.deepEqual(readFileSync(join(a,row.path)),readFileSync(join(b,row.path)));

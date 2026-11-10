@@ -151,3 +151,9 @@ console.log(delta.summary.changed); // 1
 ```
 
 See [MVP tracking](https://github.com/esheenj/design-system-foundations-oss/issues/14) for continuing keyboard/browser, documentation and distribution verification. A value comparison does not verify visual accessibility or WCAG compliance.
+
+## Additional offline Control Audit Playground
+
+The original [Control Audit Playground](https://esheenj.github.io/design-system-foundations-oss/audit.html) demonstrates **three metadata-only heuristics** on invented controls: missing accessible names, example low text contrast and small touch targets. It uses `src/audit-controls.mjs` and the existing `contrastRatio` utility, a static ES-module browser adapter and immutable findings. It does **not** inspect a real DOM, verify assistive technology or certify WCAG conformance.
+
+Run `node --test tests/audit-controls.test.mjs` (invalid-input and numerical examples) or full `npm test`; exact staged browser and Pages deployment are separate evidence gates. No third-party runtime code, accounts, uploads or telemetry. It is one additional hosted tool in this repo, not a new independent repository.
